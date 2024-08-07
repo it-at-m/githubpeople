@@ -43,7 +43,7 @@ go run cli/githubpeople -people test/githubpeople.json
 
 ```sh
 podman build . -t githubpeople
-odman run --env-file .\test\test.env -v ./test/githubpeople.json:/githubpeople.json githubpeople
+podman run --env-file .\test\test.env -v ./test/githubpeople.json:/githubpeople.json githubpeople
 ```
 
 ## Documentation
