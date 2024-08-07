@@ -7,11 +7,26 @@ jobs:
   build-image:
     runs-on: ubuntu-latest
     steps:
-      - uses: it-at-m/.github/.github/actions/action-build-image@main
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Login to Registry
+        uses: docker/login-action@v3
         with:
-          app-path: githubpeople-go
-          registry-password: ${{ secrets.GITHUB_TOKEN }}
           registry: ghcr.io
-          registry-username: ${{ github.actor }}
-          image-tags: |
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}/githubpoeple-go
+          tags: | 
             type=raw,value=latest
+      - name: Build and push image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+            
