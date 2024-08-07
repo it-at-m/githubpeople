@@ -12,12 +12,13 @@ What to adjust:
 ## ------- end to remove -------
 <!-- add Project Logo, if existing -->
 
-# repo or project name
+# githubpeople
 
 [![Made with love by it@M][made-with-love-shield]][itm-opensource]
 <!-- feel free to add more shields, style 'for-the-badge' -> see https://shields.io/badges -->
 
-*Add a description from your project here.*
+### R
+# 
 
 
 ### Built With
@@ -36,6 +37,12 @@ See the [open issues](#) for a full list of proposed features (and known issues)
 
 ## Set up
 *how can i start and fly this project*
+
+```bash
+# set environment, see test/test.env file 
+go run cli/githubpeople -people test/githubpeople.json
+
+```
 
 ## Documentation
 *what insights do you have to tell*
