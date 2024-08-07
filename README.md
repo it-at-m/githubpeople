@@ -17,15 +17,13 @@ What to adjust:
 [![Made with love by it@M][made-with-love-shield]][itm-opensource]
 <!-- feel free to add more shields, style 'for-the-badge' -> see https://shields.io/badges -->
 
-### R
-# 
-
 
 ### Built With
 
 The documentation project is built with technologies we use in our projects:
 
-* *write here the list of used technologies*
+* Go
+* github.com/go-ldap
 
 ## Roadmap
 
@@ -38,10 +36,14 @@ See the [open issues](#) for a full list of proposed features (and known issues)
 ## Set up
 *how can i start and fly this project*
 
-```bash
+```sh
 # set environment, see test/test.env file 
 go run cli/githubpeople -people test/githubpeople.json
+```
 
+```sh
+podman build . -t githubpeople
+odman run --env-file .\test\test.env -v ./test/githubpeople.json:/githubpeople.json githubpeople
 ```
 
 ## Documentation
