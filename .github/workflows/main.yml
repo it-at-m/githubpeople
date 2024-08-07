@@ -1,0 +1,17 @@
+name: release-image
+
+on:
+  push:
+
+jobs:
+  build-image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: it-at-m/.github/.github/actions/action-build-image@main
+        with:
+          app-path: githubpeople-go
+          registry-password: ${{ secrets.GITHUB_TOKEN }}
+          registry: ghcr.io
+          registry-username: ${{ github.actor }}
+          image-tags: |
+            type=raw,value=latest
