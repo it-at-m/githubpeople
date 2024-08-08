@@ -18,19 +18,13 @@ What to adjust:
 <!-- feel free to add more shields, style 'for-the-badge' -> see https://shields.io/badges -->
 
 
+
 ### Built With
 
 The documentation project is built with technologies we use in our projects:
 
 * Go
 * github.com/go-ldap
-
-## Roadmap
-
-*if you have a ROADMAP for your project add this here*
-
-
-See the [open issues](#) for a full list of proposed features (and known issues).
 
 
 ## Set up
@@ -43,21 +37,27 @@ go run cli/githubpeople -people test/githubpeople.json
 
 ```sh
 podman build . -t githubpeople
-podman run --env-file .\test\test.env -v ./test/githubpeople.json:/githubpeople.json githubpeople
+podman run --env-file .\test\example.env -v ./test/githubpeople.json:/githubpeople.json githubpeople
 ```
 
 ## Documentation
-*what insights do you have to tell*
 
-```mermaid
-graph TD;
-    A-->B;
-    A-->C;
-    B-->D;
-    C-->D;
+Githubpeople verwaltet eine Personenliste von it@M-Entwicklern.
+
+```go
+type Person struct {
+	MuenchenUser string
+	GithubUser   string
+
+	LdapBestätigt         bool
+	GithubBestätigt       bool
+	GithubPeopleBestätigt bool
+}
 ```
 
-use [diagrams](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-diagrams).
+> TODO
+> - Komponentendiagram für [cli/githubpeople/cli.go](),
+> - Sequenzdiagram für [cli/githubpeople/main.go]()
 
 ## Contributing
 
