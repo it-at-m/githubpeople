@@ -1,54 +1,62 @@
-## Customize this file after creating the new REPO and remove this lines.
-What to adjust:  
-* Add the your project or repo name direct under the logo.
-* Add a short and long desciption.
-* Add links for your final repo to report a bug or request a feature.
-* Add list of used technologies.
-* If you have, add a roadmap or remove this section.
-* Fill up the section for set up and documentation.
- * Start in this file only with documentation and link to the docs folder.
-* Add more project shields. Use [shields.io](https://shields.io/) with style `for-the-badge`.
-
-## ------- end to remove -------
-<!-- add Project Logo, if existing -->
-
-# repo or project name
+# githubpeople
 
 [![Made with love by it@M][made-with-love-shield]][itm-opensource]
-<!-- feel free to add more shields, style 'for-the-badge' -> see https://shields.io/badges -->
 
-*Add a description from your project here.*
-
+Compares members of a GitHub organization with users from LDAP and a map of GitHub and LDAP usernames.
 
 ### Built With
 
-The documentation project is built with technologies we use in our projects:
+The project is built with technologies we use in our projects:
 
-* *write here the list of used technologies*
+* Bash script
+* [jq](https://github.com/jqlang/jq)
+* ldapsearch from [ldap-utils](https://wiki.debian.org/LDAP/LDAPUtils)
 
 ## Roadmap
 
-*if you have a ROADMAP for your project add this here*
-
-
-See the [open issues](#) for a full list of proposed features (and known issues).
-
+See the [open issues](https://github.com/it-at-m/githubpeople/issues) for a full list of proposed features (and known issues).
 
 ## Set up
-*how can i start and fly this project*
 
-## Documentation
-*what insights do you have to tell*
+Build docker image:
 
-```mermaid
-graph TD;
-    A-->B;
-    A-->C;
-    B-->D;
-    C-->D;
+```sh
+podman build . -t githubpeople
 ```
 
-use [diagrams](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-diagrams).
+Run Docker container with environment variables and `githubpeople.json`:
+
+```sh
+podman run --env-file ./example/.env -v ./example/githubpeople.json:/app/githubpeople.json githubpeople
+```
+
+Optional it is possible to add a `.pem` certificate for LDAP:
+
+```sh
+podman run --env-file ./example/.env -v ./example/githubpeople.json:/app/githubpeople.json -v ./example/cert.pem:/app/cert.pem githubpeople
+```
+
+## Documentation
+
+In the [it@M](https://github.com/it-at-m/) organization, members can develop with their own, private GitHub account. Therefore, the name of these accounts can be set individually and doesn't match the username in LDAP.
+
+To keep track of the members in the organization, a list (`githubpeople.json`) was created that maps GitHub and LDAP usernames.
+
+In order to check automatically if there are any differences between the organization members, the list and LDAP, this project was started.
+
+It uses a Docker container, which runs a shell script that executes the following steps:0
+
+1. Fetch a list of organization members with GitHub's GraphQL API
+
+2. Loop over the entries of `githubpeople.json`, checking if the user is in the organization and concatenating the LDAP usernames to a filter string
+
+3. Search for users in LDAP with `ldapsearch` and the filter string so that only one request to LDAP is needed
+
+4. Again, loop over `githubpeople.json` entries and check if the user is in LDAP
+
+5. Loop over organization members and check if the member is on the `githubpeople.json` list
+
+For each failing check, an error message is printed, and if at least one check fails, the script terminates with error code 1 instead of 0.
 
 ## Contributing
 
@@ -66,11 +74,9 @@ Don't forget to give the project a star! Thanks again!
 
 More about this in the [CODE_OF_CONDUCT](/CODE_OF_CONDUCT.md) file.
 
-
 ## License
 
 Distributed under the MIT License. See [LICENSE](LICENSE) file for more information.
-
 
 ## Contact
 
