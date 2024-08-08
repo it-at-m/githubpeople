@@ -54,9 +54,11 @@ type Person struct {
 	GithubPeopleBestätigt bool
 }
 ```
+Komponentendiagram für [cli/githubpeople/cli.go](https://github.com/it-at-m/githubpeople/blob/githubpeople-go/cli/githubpeople/cli.go):
+
+![Komponentendiagramm](docs/Komponentendiagramm.drawio.png)
 
 > TODO
-> - Komponentendiagram für [cli/githubpeople/cli.go](),
 > - Sequenzdiagram für [cli/githubpeople/main.go]()
 
 ## Contributing
