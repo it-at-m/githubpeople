@@ -10,4 +10,4 @@ WORKDIR /app
 COPY ./githubpeople.sh .
 
 RUN chmod +x ./githubpeople.sh
-CMD ["./githubpeople.sh", "githubpeople.json"]
+CMD ["./githubpeople.sh", "githubpeople.json", "200"]

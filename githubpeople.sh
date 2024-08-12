@@ -8,6 +8,12 @@ if [ ! -f $1 ]; then
   exit $?
 fi
 
+maxiterations=$2
+if [ ! $2 ]; then
+  echo "Bitte maximale Anzahl an Iterationen angeben."
+  exit 1
+fi
+
 # Find .pem certificate and load it for ldap
 cert=$(find . -type f -name "*.pem" -print -quit)
 if [ -f $cert ]; then
@@ -20,7 +26,7 @@ fi
 echo "Lade Daten von GitHub API..."
 
 orgmembers=$(
-  curl https://api.github.com/graphql -X POST -sS \
+  curl https://api.github.com/graphql -X POST -sS --fail-with-body \
   -H "Authorization: Bearer ${GITHUBPEOPLE_GITHUB_TOKEN}" \
   -H "Content-Type: application/json" \
   --proxy "${GITHUBPEOPLE_GITHUB_PROXY}" \
@@ -36,6 +42,11 @@ orgmembers=$(
   }' '{"query":$query}')"
 )
 
+if [ $? -gt 0 ]; then
+  echo "Fehler beim Laden der Daten von GitHub API."
+  exit 1
+fi
+
 ldapFilter=""
 
 echo "Durchsuche Liste nach Nutzern, die nicht in der GitHub Organisation sind..."
@@ -45,6 +56,10 @@ while true ; do
   # Stop if all members in list are checked
   if jq .[$i] $memberlist | grep -q null; then
     break
+  fi
+  if [ $i -gt $maxiterations ]; then
+    echo "Maximum von $maxiterations Iterationen wurde erreicht."
+    exit 1
   fi
 
   # Get user data from memberlist
@@ -68,6 +83,11 @@ echo "Lade Daten von LDAP..."
 # Search ldap for all users in list
 ldapResponse=$(ldapsearch -H ${GITHUBPEOPLE_LDAP_URL} -D ${GITHUBPEOPLE_LDAP_USER} -w ${GITHUBPEOPLE_LDAP_PASSWORD} -b ${GITHUBPEOPLE_LDAP_BASEDN} "(|$ldapFilter)" cn)
 
+if [ $? -gt 0 ]; then
+  echo "Fehler beim Laden der Daten von LDAP."
+  exit 1
+fi
+
 echo "Durchsuche Liste nach Nutzern, die nicht in LDAP sind..."
 
 i=0
@@ -75,6 +95,10 @@ while true ; do
   # Stop if all members in list are checked
   if jq .[$i] $memberlist | grep -q null; then
     break
+  fi
+  if [ $i -gt $maxiterations ]; then
+    echo "Maximum von $maxiterations Iterationen wurde erreicht."
+    exit 1
   fi
 
   muenchenUser=$(jq .[$i].muenchenUser $memberlist | tr -d \")
@@ -100,6 +124,10 @@ while true ; do
   # Stop if all members of organization are checked
   if echo "$githubUser" | grep -q null; then
     break
+  fi
+  if [ $i -gt $maxiterations ]; then
+    echo "Maximum von $maxiterations Iterationen wurde erreicht."
+    exit 1
   fi
 
   # Check if user is in list
