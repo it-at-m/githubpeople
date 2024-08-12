@@ -16,7 +16,7 @@ fi
 
 # Find .pem certificate and load it for ldap
 cert=$(find . -type f -name "*.pem" -print -quit)
-if [ -f $cert ]; then
+if [ $cert ] && [ -f $cert ]; then
   echo "TLS_CACERT $cert" >> /etc/ldap/ldap.conf
   echo "Zertifikat $cert geladen."
 else
