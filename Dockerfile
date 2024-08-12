@@ -13,12 +13,7 @@ RUN go mod verify
 
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /githubpeople ./cli/githubpeople
 
-FROM scratch
-COPY --from=build /usr/share/zoneinfo /usr/share/zoneinfo
-COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-COPY --from=build /etc/passwd /etc/passwd
-COPY --from=build /etc/group /etc/group
-
+FROM alpine:3.20.2
 COPY --from=build /githubpeople .
 # JSON Data must be mounted as volume 
 CMD ["/githubpeople", "-people", "githubpeople.json"]
