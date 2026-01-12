@@ -12,43 +12,54 @@ What to adjust:
 ## ------- end to remove -------
 <!-- add Project Logo, if existing -->
 
-# repo or project name
+# githubpeople
 
 [![Made with love by it@M][made-with-love-shield]][itm-opensource]
 <!-- feel free to add more shields, style 'for-the-badge' -> see https://shields.io/badges -->
 
-*Add a description from your project here.*
 
 
 ### Built With
 
 The documentation project is built with technologies we use in our projects:
 
-* *write here the list of used technologies*
-
-## Roadmap
-
-*if you have a ROADMAP for your project add this here*
-
-
-See the [open issues](#) for a full list of proposed features (and known issues).
+* Go
+* github.com/go-ldap
 
 
 ## Set up
 *how can i start and fly this project*
 
-## Documentation
-*what insights do you have to tell*
-
-```mermaid
-graph TD;
-    A-->B;
-    A-->C;
-    B-->D;
-    C-->D;
+```sh
+# set environment, see test/test.env file 
+go run cli/githubpeople -people test/githubpeople.json
 ```
 
-use [diagrams](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-diagrams).
+```sh
+podman build . -t githubpeople
+podman run --env-file .\test\example.env -v ./test/githubpeople.json:/githubpeople.json githubpeople
+```
+
+## Documentation
+
+Githubpeople verwaltet eine Personenliste von it@M-Entwicklern.
+
+```go
+type Person struct {
+	MuenchenUser string
+	GithubUser   string
+
+	LdapBestätigt         bool
+	GithubBestätigt       bool
+	GithubPeopleBestätigt bool
+}
+```
+Komponentendiagram für [cli/githubpeople/cli.go](https://github.com/it-at-m/githubpeople/blob/githubpeople-go/cli/githubpeople/cli.go):
+
+![Komponentendiagramm](docs/Komponentendiagramm.drawio.png)
+
+> TODO
+> - Sequenzdiagram für [cli/githubpeople/main.go]()
 
 ## Contributing
 

@@ -1,8 +1,19 @@
-# Dockerfiles may only contain a FROM and the application data.
-# For Java applications use /ubi9/openjdk-11-runtime or /ubi9/openjdk-17-runtime as Base Image, for documentation 
-# please see https://access.redhat.com/documentation/en-us/red_hat_jboss_middleware_for_openshift/3/html/red_hat_java_s2i_for_openshift/
-# All other variations must be approved by KM8
+FROM golang:1.21-alpine as build
+RUN apk --update add tzdata
+RUN apk --update add ca-certificates
 
-FROM registry.access.redhat.com/ubi9/openjdk-17-runtime:latest
+# WORKDIR /usr/local/share/ca-certificates
+# ADD http://ocsp.muenchen.de/pki/LHM-SUBCA2-v1.pem .
+# ADD http://ocsp.muenchen.de/pki/LHM-SUBCA2-v2.pem .
+# RUN update-ca-certificates
 
-COPY target/*.jar /deployments/application.jar
+WORKDIR /app
+COPY . .
+RUN go mod verify
+
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /githubpeople ./cli/githubpeople
+
+FROM alpine:3.20.2
+COPY --from=build /githubpeople .
+# JSON Data must be mounted as volume 
+CMD ["/githubpeople", "-people", "githubpeople.json"]
